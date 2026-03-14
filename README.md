@@ -1,6 +1,6 @@
 # AIPM Skills
 
-AI 产品经理技能库，为 vibe coding 提供快速 PRD 编写能力。
+AI 产品经理技能库
 
 ## Skills
 
