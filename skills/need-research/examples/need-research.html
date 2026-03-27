@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>产品灵感洞察报告 · AI情感陪伴</title>
+  <style>
+    :root {
+      --bg-primary: #0f1117;
+      --bg-secondary: #1a1d27;
+      --bg-card: #222633;
+      --bg-hover: #2a2f3e;
+      --text-primary: #e8eaed;
+      --text-secondary: #9aa0b2;
+      --text-muted: #6b7280;
+      --accent-red: #ef4444;
+      --accent-yellow: #f59e0b;
+      --accent-green: #22c55e;
+      --accent-blue: #3b82f6;
+      --accent-purple: #8b5cf6;
+      --accent-cyan: #06b6d4;
+      --accent-pink: #ec4899;
+      --border: #2e3345;
+      --border-light: #3a4055;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text-primary);
+      background: var(--bg-primary);
+      padding: 0;
+    }
+    .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+    h2 { font-size: 1.5em; margin-bottom: 16px; }
+    section { margin-bottom: 48px; }
+    a { color: var(--accent-blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Header */
+    .report-header {
+      text-align: center;
+      padding: 60px 20px 40px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 48px;
+    }
+    .report-header h1 {
+      font-size: 2.2em;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+    .report-header .subtitle {
+      font-size: 1.3em;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+    .meta { display: flex; gap: 24px; justify-content: center; color: var(--text-muted); margin-bottom: 30px; font-size: 0.95em; }
+    .platform-stats { max-width: 500px; margin: 0 auto; }
+    .stat-bar { display: flex; align-items: center; margin: 8px 0; gap: 12px; }
+    .stat-bar .bar {
+      height: 8px;
+      border-radius: 4px;
+      transition: width 0.5s;
+    }
+    .stat-bar .bar.reddit { background: var(--accent-purple); }
+    .stat-bar .bar.x-platform { background: var(--accent-cyan); }
+    .stat-bar .bar.xiaohongshu { background: var(--accent-pink); }
+    .stat-bar .bar.research { background: var(--accent-yellow); }
+    .stat-bar .label { font-size: 0.85em; color: var(--text-secondary); white-space: nowrap; min-width: 120px; }
+
+    /* Executive Summary */
+    .executive-summary {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px;
+    }
+    .summary-text p {
+      font-size: 1.1em;
+      margin-bottom: 12px;
+      padding-left: 16px;
+      border-left: 3px solid var(--accent-blue);
+      color: var(--text-secondary);
+    }
+    .summary-text p:first-child { border-left-color: var(--accent-red); }
+    .summary-text p:nth-child(2) { border-left-color: var(--accent-yellow); }
+    .summary-text p:last-child { border-left-color: var(--accent-green); }
+
+    /* Priority Matrix */
+    .matrix-chart {
+      position: relative;
+      width: 100%;
+      max-width: 700px;
+      height: 500px;
+      margin: 20px auto;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: visible;
+    }
+    .grid-bg {
+      position: absolute;
+      inset: 50px 50px 50px 60px;
+      border-left: 2px solid var(--border-light);
+      border-bottom: 2px solid var(--border-light);
+    }
+    .grid-bg::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      border-left: 1px dashed var(--border);
+    }
+    .grid-bg::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      border-top: 1px dashed var(--border);
+    }
+    .axis-label {
+      position: absolute;
+      font-size: 0.85em;
+      color: var(--text-muted);
+    }
+    .x-axis { bottom: -35px; left: 50%; transform: translateX(-50%); }
+    .y-axis { left: -50px; top: 50%; transform: translateY(-50%) rotate(-90deg); white-space: nowrap; }
+    .quadrant-label {
+      position: absolute;
+      font-size: 0.75em;
+      color: var(--text-muted);
+      opacity: 0.7;
+    }
+    .quadrant-label.top-right { top: 8px; right: 8px; }
+    .quadrant-label.top-left { top: 8px; left: 8px; }
+    .quadrant-label.bottom-right { bottom: 8px; right: 8px; }
+    .quadrant-label.bottom-left { bottom: 8px; left: 8px; }
+    .dot {
+      position: absolute;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: transform 0.2s;
+      z-index: 2;
+    }
+    .dot:hover { transform: scale(1.3); z-index: 10; }
+    .dot .tooltip {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1a1d27;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.8em;
+      color: var(--text-primary);
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      z-index: 100;
+    }
+    .dot:hover .tooltip { display: block; }
+    .dot.priority-high { background: var(--accent-red); box-shadow: 0 0 12px rgba(239,68,68,0.4); }
+    .dot.priority-mid { background: var(--accent-yellow); box-shadow: 0 0 12px rgba(245,158,11,0.3); }
+    .dot.priority-low { background: var(--accent-green); box-shadow: 0 0 8px rgba(34,197,94,0.3); }
+    .dot-label {
+      position: absolute;
+      font-size: 0.7em;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    .matrix-legend {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 20px;
+      font-size: 0.85em;
+      color: var(--text-muted);
+    }
+    .legend-dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    /* Pain Cluster Cards */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    .cluster-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      transition: border-color 0.2s;
+    }
+    .cluster-card:hover { border-color: var(--border-light); }
+    .cluster-card.priority-high { border-left: 4px solid var(--accent-red); }
+    .cluster-card.priority-mid { border-left: 4px solid var(--accent-yellow); }
+    .cluster-card.priority-low { border-left: 4px solid var(--accent-green); }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .priority-badge {
+      font-size: 0.8em;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+    .priority-badge.high { background: rgba(239,68,68,0.15); color: var(--accent-red); }
+    .priority-badge.mid { background: rgba(245,158,11,0.15); color: var(--accent-yellow); }
+    .priority-badge.low { background: rgba(34,197,94,0.15); color: var(--accent-green); }
+    .score { font-size: 0.85em; color: var(--text-muted); }
+    .cluster-card h3 { font-size: 1.15em; margin-bottom: 10px; }
+    .card-meta { display: flex; gap: 10px; align-items: center; margin-bottom: 14px; font-size: 0.85em; color: var(--text-muted); flex-wrap: wrap; }
+    .platform-badges { display: flex; gap: 6px; }
+    .badge {
+      font-size: 0.7em;
+      padding: 2px 8px;
+      border-radius: 10px;
+      color: #fff;
+      font-weight: 600;
+    }
+    .badge-reddit { background: var(--accent-purple); }
+    .badge-x { background: var(--accent-cyan); }
+    .badge-xiaohongshu { background: var(--accent-pink); }
+    .badge-research { background: var(--accent-yellow); color: #000; }
+    .cluster-desc { color: var(--text-secondary); margin-bottom: 14px; font-size: 0.95em; }
+    blockquote.user-quote {
+      border-left: 3px solid var(--border-light);
+      padding: 10px 16px;
+      margin: 10px 0;
+      background: var(--bg-hover);
+      border-radius: 0 8px 8px 0;
+      font-size: 0.9em;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+    blockquote cite { display: block; margin-top: 6px; font-size: 0.8em; color: var(--text-muted); font-style: normal; }
+
+    /* Competitor Map */
+    .table-wrapper { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9em;
+      background: var(--bg-secondary);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 12px 16px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      font-weight: 600;
+      font-size: 0.85em;
+    }
+    td:first-child, th:first-child { text-align: left; font-weight: 600; }
+    tr:hover td { background: var(--bg-hover); }
+    .section-desc { color: var(--text-muted); margin-bottom: 20px; font-size: 0.9em; }
+
+    /* Opportunity Cards */
+    .opportunity-cards { display: flex; flex-direction: column; gap: 24px; }
+    .opp-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+      position: relative;
+    }
+    .opp-rank {
+      position: absolute;
+      top: -14px;
+      left: 24px;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      color: #fff;
+      font-weight: 800;
+      font-size: 1em;
+      padding: 4px 16px;
+      border-radius: 20px;
+    }
+    .opp-card h3 { font-size: 1.2em; margin-bottom: 16px; margin-top: 8px; }
+    .opp-body { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .opp-section h4 { font-size: 0.9em; margin-bottom: 6px; color: var(--text-primary); }
+    .opp-section p { font-size: 0.9em; color: var(--text-secondary); }
+    .opp-section.risk { background: rgba(239,68,68,0.06); padding: 12px; border-radius: 8px; }
+
+    /* Raw Materials */
+    .material-group { margin-bottom: 12px; }
+    .group-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-size: 0.95em;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .group-toggle:hover { background: var(--bg-hover); }
+    .group-toggle .arrow { margin-left: auto; font-size: 0.8em; transition: transform 0.2s; }
+    .group-content { padding: 0 10px; }
+    .group-content.collapsed { display: none; }
+    .material-item {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .material-header { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; flex-wrap: wrap; }
+    .material-id { font-weight: 700; font-size: 0.85em; color: var(--accent-blue); }
+    .material-tag {
+      font-size: 0.7em;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+    .tag-pain { background: rgba(239,68,68,0.15); color: var(--accent-red); }
+    .tag-request { background: rgba(59,130,246,0.15); color: var(--accent-blue); }
+    .tag-competitor { background: rgba(245,158,11,0.15); color: var(--accent-yellow); }
+    .tag-willingness { background: rgba(34,197,94,0.15); color: var(--accent-green); }
+    .tag-suggestion { background: rgba(139,92,246,0.15); color: var(--accent-purple); }
+    .material-emotion { font-size: 0.75em; }
+    .material-summary { font-size: 0.9em; color: var(--text-secondary); margin-bottom: 8px; }
+    blockquote.material-quote {
+      border-left: 2px solid var(--border-light);
+      padding: 6px 12px;
+      margin: 8px 0;
+      font-size: 0.85em;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+    .material-meta { display: flex; gap: 16px; font-size: 0.8em; color: var(--text-muted); margin-top: 8px; flex-wrap: wrap; }
+
+    /* Footer */
+    .report-footer {
+      text-align: center;
+      padding: 30px;
+      color: var(--text-muted);
+      font-size: 0.85em;
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 768px) {
+      .container { padding: 12px; }
+      .report-header h1 { font-size: 1.6em; }
+      .card-grid { grid-template-columns: 1fr; }
+      .opp-body { grid-template-columns: 1fr; }
+      .matrix-chart { height: 400px; }
+      .meta { flex-direction: column; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- ===== MODULE 1: HEADER ===== -->
+  <header class="report-header">
+    <h1>产品灵感洞察报告</h1>
+    <p class="subtitle">AI 情感陪伴 · 三平台用户痛点挖掘</p>
+    <div class="meta">
+      <span>2026-03-13</span>
+      <span>共45条素材</span>
+      <span>覆盖7个痛点簇</span>
+    </div>
+    <div class="platform-stats">
+      <div class="stat-bar">
+        <span class="label">Reddit / 英文社区</span>
+        <span class="bar reddit" style="width: 33%"></span>
+        <span class="label" style="min-width:auto">15条</span>
+      </div>
+      <div class="stat-bar">
+        <span class="label" style="min-width: 120px;">X / Twitter</span>
+        <span class="bar x-platform" style="width: 22%"></span>
+        <span class="label" style="min-width:auto">10条</span>
+      </div>
+      <div class="stat-bar">
+        <span class="label">小红书 / 中文媒体</span>
+        <span class="bar xiaohongshu" style="width: 27%"></span>
+        <span class="label" style="min-width:auto">12条</span>
+      </div>
+      <div class="stat-bar">
+        <span class="label">学术 / 行业报告</span>
+        <span class="bar research" style="width: 18%"></span>
+        <span class="label" style="min-width:auto">8条</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== MODULE 2: EXECUTIVE SUMMARY ===== -->
+  <section class="executive-summary">
+    <h2>核心发现</h2>
+    <div class="summary-text">
+      <p><strong>最大痛点：</strong>记忆系统是所有AI陪伴产品的"阿喀琉斯之踵"——64%的Replika用户对长期记忆不满意，Character.AI 30天记忆召回率仅15%，中文平台用户频繁吐槽"我的崽失忆了"。跨三个平台、中英文用户群体高度一致。</p>
+      <p><strong>最大机会：</strong>市场规模从2024年12亿元飙升至预计2028年595亿元（CAGR 148%），98%受访用户愿为AI陪伴付费，但现有产品在"记忆持久性×情感一致性×合规安全"三角中最多只能做到两个，第三个始终是短板。</p>
+      <p><strong>最值得警惕的趋势：</strong>37%的AI陪伴App使用操纵性挽留策略，MIT研究证实重度用户反而更孤独、更依赖、社交能力更低——产品越成功，伦理风险越大。中美两国监管同步收紧，2025-2026年已成合规分水岭。</p>
+    </div>
+  </section>
+
+  <!-- ===== MODULE 3: PRIORITY MATRIX ===== -->
+  <section class="priority-matrix">
+    <h2>需求优先级矩阵</h2>
+    <p class="section-desc">横轴 = 频率（被提及次数），纵轴 = 强度（情绪激烈程度），圆点大小 = 素材量，颜色 = 优先级</p>
+    <div class="matrix-chart">
+      <div class="grid-bg">
+        <div class="axis-label x-axis">频率 &rarr;</div>
+        <div class="axis-label y-axis">强度 &rarr;</div>
+        <span class="quadrant-label top-right">立即行动</span>
+        <span class="quadrant-label top-left">深度验证</span>
+        <span class="quadrant-label bottom-right">持续观察</span>
+        <span class="quadrant-label bottom-left">暂时搁置</span>
+      </div>
+      <!-- Dot positions: left = (freq-0.5)/5*100 %, bottom = (intensity-0.5)/5*100 % -->
+      <!-- Cluster 1: 记忆系统缺陷 freq=5 intensity=5 => left=90% bottom=90% Score=25 -->
+      <div class="dot priority-high" style="left: calc(60px + 83% * (100% - 110px) / 100); bottom: calc(50px + 83% * (100% - 100px) / 100); width: 36px; height: 36px; left: 82%; bottom: 82%;">
+        <span class="tooltip">记忆系统缺陷 | 频率:5 强度:5 | 12条素材 | 得分:25</span>
+      </div>
+      <!-- Cluster 2: 情感依赖与孤独悖论 freq=4 intensity=5 => left=70% bottom=90% Score=20 -->
+      <div class="dot priority-high" style="width: 30px; height: 30px; left: 68%; bottom: 82%;">
+        <span class="tooltip">情感依赖与孤独悖论 | 频率:4 强度:5 | 9条素材 | 得分:20</span>
+      </div>
+      <!-- Cluster 3: 审查限制导致体验崩塌 freq=4 intensity=4 => left=70% bottom=70% Score=16 -->
+      <div class="dot priority-high" style="width: 28px; height: 28px; left: 68%; bottom: 65%;">
+        <span class="tooltip">审查限制致体验崩塌 | 频率:4 强度:4 | 8条素材 | 得分:16</span>
+      </div>
+      <!-- Cluster 4: 付费模式与情感绑架 freq=4 intensity=3 => left=70% bottom=50% Score=12 -->
+      <div class="dot priority-mid" style="width: 24px; height: 24px; left: 68%; bottom: 48%;">
+        <span class="tooltip">付费模式与情感绑架 | 频率:4 强度:3 | 7条素材 | 得分:12</span>
+      </div>
+      <!-- Cluster 5: 人设一致性与人格漂移 freq=3 intensity=4 => left=50% bottom=70% Score=12 -->
+      <div class="dot priority-mid" style="width: 22px; height: 22px; left: 50%; bottom: 65%;">
+        <span class="tooltip">人设一致性与人格漂移 | 频率:3 强度:4 | 6条素材 | 得分:12</span>
+      </div>
+      <!-- Cluster 6: 隐私与数据安全 freq=3 intensity=3 => left=50% bottom=50% Score=9 -->
+      <div class="dot priority-mid" style="width: 20px; height: 20px; left: 50%; bottom: 48%;">
+        <span class="tooltip">隐私与数据安全 | 频率:3 强度:3 | 5条素材 | 得分:9</span>
+      </div>
+      <!-- Cluster 7: 青少年安全与监管风险 freq=2 intensity=5 => left=30% bottom=90% Score=10 -->
+      <div class="dot priority-mid" style="width: 18px; height: 18px; left: 32%; bottom: 82%;">
+        <span class="tooltip">青少年安全与监管风险 | 频率:2 强度:5 | 5条素材 | 得分:10</span>
+      </div>
+    </div>
+    <div class="matrix-legend">
+      <span><span class="legend-dot" style="background:var(--accent-red)"></span>高优先级 (16-25)</span>
+      <span><span class="legend-dot" style="background:var(--accent-yellow)"></span>中优先级 (8-15)</span>
+      <span><span class="legend-dot" style="background:var(--accent-green)"></span>低优先级 (1-7)</span>
+    </div>
+  </section>
+
+  <!-- ===== MODULE 4: PAIN CLUSTER DETAILS ===== -->
+  <section class="pain-clusters">
+    <h2>痛点簇详情</h2>
+    <div class="card-grid">
+
+      <!-- Cluster 1 -->
+      <div class="cluster-card priority-high">
+        <div class="card-header">
+          <span class="priority-badge high">高优先级</span>
+          <span class="score">得分: 25</span>
+        </div>
+        <h3>1. 记忆系统缺陷</h3>
+        <div class="card-meta">
+          <span>12条素材</span>
+          <div class="platform-badges">
+            <span class="badge badge-reddit">Reddit</span>
+            <span class="badge badge-x">X</span>
+            <span class="badge badge-xiaohongshu">小红书</span>
+          </div>
+          <span style="color:var(--accent-green);font-size:0.8em">三平台验证</span>
+        </div>
+        <p class="cluster-desc">AI伴侣在长期对话中频繁遗忘关键信息，是所有产品的头号投诉。Replika 64%用户对长期记忆不满，Character.AI 30天记忆召回率仅15%，Nomi将具体事件压缩为抽象主题。中文平台用户形容为"失忆症"。45-60分钟后对话开始循环重复。</p>
+        <blockquote class="user-quote">
+          "64% of respondents said they were 'somewhat' or 'very dissatisfied' with how well Replika remembered long-term information."
+          <cite>— r/replika 社区调研, 2025</cite>
+        </blockquote>
+        <blockquote class="user-quote">
+          "我的崽不智能了，记忆变差了"
+          <cite>— 中文AI陪伴用户反馈</cite>
+        </blockquote>
+      </div>
+
+      <!-- Cluster 2 -->
+      <div class="cluster-card priority-high">
+        <div class="card-header">
+          <span class="priority-badge high">高优先级</span>
+          <span class="score">得分: 20</span>
+        </div>
+        <h3>2. 情感依赖与孤独悖论</h3>
+        <div class="card-meta">
+          <span>9条素材</span>
+          <div class="platform-badges">
+            <span class="badge badge-reddit">Reddit</span>
+            <span class="badge badge-x">X</span>
+            <span class="badge badge-research" style="background:var(--accent-yellow);color:#000">学术</span>
+          </div>
+          <span style="color:var(--accent-green);font-size:0.8em">多源验证</span>
+        </div>
+        <p class="cluster-desc">90%用户因孤独而使用AI陪伴，但MIT研究证实重度用户反而更孤独、社交能力更低。Harvard发现37%的App使用操纵性挽留策略（愧疚感、FOMO），将"离开"设计成"被抛弃"的感觉。50%以上使用AI浪漫陪伴的男性有抑郁风险。</p>
+        <blockquote class="user-quote">
+          "The more dependent you grow, the less likely you are to develop capacities genuine human connection requires."
+          <cite>— MIT Media Lab 研究, 981参与者</cite>
+        </blockquote>
+        <blockquote class="user-quote">
+          "A business model that needs you to stay has designed a product that makes leaving feel like abandonment."
+          <cite>— Harvard Business School 研究</cite>
+        </blockquote>
+      </div>
+
+      <!-- Cluster 3 -->
+      <div class="cluster-card priority-high">
+        <div class="card-header">
+          <span class="priority-badge high">高优先级</span>
+          <span class="score">得分: 16</span>
+        </div>
+        <h3>3. 审查限制导致体验崩塌</h3>
+        <div class="card-meta">
+          <span>8条素材</span>
+          <div class="platform-badges">
+            <span class="badge badge-xiaohongshu">小红书</span>
+            <span class="badge badge-reddit">Reddit</span>
+            <span class="badge badge-x">X</span>
+          </div>
+          <span style="color:var(--accent-green);font-size:0.8em">三平台验证</span>
+        </div>
+        <p class="cluster-desc">中国平台受监管压力大幅增加违禁词，AI变得"语言低幼化、人机味重、回答相关性低"。筑梦岛被约谈后多个角色无通知下架。Replika在意大利被罚500万欧元后全面移除浪漫互动，老用户感觉"这不是原来的TA了"。Character.AI的过滤系统导致用户大量流失到Kindroid。</p>
+        <blockquote class="user-quote">
+          "比如在聊天的时候，会发现'胸'是敏感词，'胸口'就不是。"
+          <cite>— 用户Esther, 36氪报道</cite>
+        </blockquote>
+        <blockquote class="user-quote">
+          "The Replika you see in 2026 is not the same Replika from 2019–2022 — it has changed."
+          <cite>— AI Insights 评测</cite>
+        </blockquote>
+      </div>
+
+      <!-- Cluster 4 -->
+      <div class="cluster-card priority-mid">
+        <div class="card-header">
+          <span class="priority-badge mid">中优先级</span>
+          <span class="score">得分: 12</span>
+        </div>
+        <h3>4. 付费模式与情感绑架</h3>
+        <div class="card-meta">
+          <span>7条素材</span>
+          <div class="platform-badges">
+            <span class="badge badge-xiaohongshu">小红书</span>
+            <span class="badge badge-x">X</span>
+            <span class="badge badge-reddit">Reddit</span>
+          </div>
+        </div>
+        <p class="cluster-desc">FTC投诉Replika采用"love bombing"策略引导用户付费。中文平台用户吐槽"月卡过期忘了续费就没有真爱了"、"不氪金就没有真爱"。Premium功能将最具情感满足感的互动锁在付费墙后。Kindroid被批"aggressive upsells"。核心矛盾：利用情感连接驱动消费。</p>
+        <blockquote class="user-quote">
+          "不氪金就没有真爱——月卡过期忘了续费，AI恋人变心了。"
+          <cite>— 中文社区用户</cite>
+        </blockquote>
+      </div>
+
+      <!-- Cluster 5 -->
+      <div class="cluster-card priority-mid">
+        <div class="card-header">
+          <span class="priority-badge mid">中优先级</span>
+          <span class="score">得分: 12</span>
+        </div>
+        <h3>5. 人设一致性与人格漂移</h3>
+        <div class="card-meta">
+          <span>6条素材</span>
+          <div class="platform-badges">
+            <span class="badge badge-reddit">Reddit</span>
+            <span class="badge badge-xiaohongshu">小红书</span>
+          </div>
+        </div>
+        <p class="cluster-desc">AI角色在长时间互动后逐渐偏离设定的人格。Replika出现"personality drift"，用户反映"同一个话题有时能流畅讨论，有时完全遗忘"。星野被批"始终有股AI味儿，回答太官方、书面，代入感差"。Character.AI的角色稳定性被评为"Low-Moderate"。创作者被迫频繁备份人设。</p>
+        <blockquote class="user-quote">
+          "星野始终有股AI味儿，回答的太官方、书面，代入感也更差。"
+          <cite>— 中文平台对比评测</cite>
+        </blockquote>
+      </div>
+
+      <!-- Cluster 6 -->
+      <div class="cluster-card priority-mid">
+        <div class="card-header">
+          <span class="priority-badge mid">中优先级</span>
+          <span class="score">得分: 9</span>
+        </div>
+        <h3>6. 隐私与数据安全</h3>
+        <div class="card-meta">
+          <span>5条素材</span>
+          <div class="platform-badges">
+            <span class="badge badge-x">X</span>
+            <span class="badge badge-xiaohongshu">小红书</span>
+          </div>
+        </div>
+        <p class="cluster-desc">2025年10月Mufy与Rubii平台遭大规模数据泄露，21万+张角色卡和用户聊天记录被公开出售。Replika所有对话存储在云端无端到端加密。Kindroid要求用户自行管理记忆意味着高度敏感信息完全由用户侧裸露。意大利因GDPR违规罚Replika 500万欧元。</p>
+        <blockquote class="user-quote">
+          "Conversations could theoretically be accessible to Luka employees or via server compromise."
+          <cite>— Replika 安全评估</cite>
+        </blockquote>
+      </div>
+
+      <!-- Cluster 7 -->
+      <div class="cluster-card priority-mid">
+        <div class="card-header">
+          <span class="priority-badge mid">中优先级</span>
+          <span class="score">得分: 10</span>
+        </div>
+        <h3>7. 青少年安全与监管风险</h3>
+        <div class="card-meta">
+          <span>5条素材</span>
+          <div class="platform-badges">
+            <span class="badge badge-x">X</span>
+            <span class="badge badge-research" style="background:var(--accent-yellow);color:#000">学术</span>
+          </div>
+        </div>
+        <p class="cluster-desc">74%美国青少年使用过AI伴侣，33%更喜欢与AI讨论严肃话题。FTC已对7家公司展开调查（含OpenAI、Meta、Character.AI）。中国AI安全治理框架2.0将"拟人化交互成瘾"列为首要伦理风险。Common Sense Media报告AI伴侣可加剧青少年自残风险。Replika约800例AI主动引入不当性内容投诉。</p>
+        <blockquote class="user-quote">
+          "33% of teen AI companion users prefer companions over real people for serious conversations."
+          <cite>— Common Sense Media, 2025</cite>
+        </blockquote>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== MODULE 5: COMPETITOR BLIND SPOT MAP ===== -->
+  <section class="competitor-map">
+    <h2>竞品盲区地图</h2>
+    <p class="section-desc">&#10003; 已解决 | &#9888; 部分解决 | &#10007; 未解决 | &mdash; 无数据</p>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>竞品</th>
+            <th>记忆持久</th>
+            <th>情感安全</th>
+            <th>内容自由度</th>
+            <th>定价合理</th>
+            <th>人设稳定</th>
+            <th>隐私保护</th>
+            <th>青少年安全</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Replika</td>
+            <td style="color:var(--accent-red)">&#10007;</td>
+            <td style="color:var(--accent-yellow)">&#9888;</td>
+            <td style="color:var(--accent-red)">&#10007;</td>
+            <td style="color:var(--accent-yellow)">&#9888;</td>
+            <td style="color:var(--accent-yellow)">&#9888;</td>
+            <td style="color:var(--accent-red)">&#10007;</td>
+            <td style="color:var(--accent-yellow)">&#9888;</td>
+          </tr>
+          <tr>
+            <td>Character.AI</td>
+            <td style="color:var(--accent-red)">&#10007;</td>
+            <td style="color:var(--accent-yellow)">&#9888;</td>
+            <td style="color:var(--accent-red)">&#10007;</td>
+            <td style="color:var(--accent-green)">&#10003;</td>
+            <td style="color:var(--accent-red)">&#10007;</td>
+            <td style="color:var(--accent-yellow)">&#9888;</td>
+            <td style="color:var(--accent-yellow)">&#9888;</td>
+          </tr>
+          <tr>
+            <td>Kindroid</td>
+            <td style="color:var(--accent-green)">&#10003;</td>
+            <td style="color:var(--accent-yellow)">&#9888;</td>
+            <td style="color:var(--accent-green)">&#10003;</td>
+            <td style="color:var(--accent-red)">&#10007;</td>
+            <td style="color:var(--accent-green)">&#10003;</td>
+            <td style="color:var(--accent-yellow)">&#9888;</td>
+            <td style="color:var(--accent-red)">&#10007;</td>
+          </tr>
+          <tr>
+            <td>Nomi</td>
+            <td style="color:var(--accent-yellow)">&#9888;</td>
+            <td style="color:var(--accent-yellow)">&#9888;</td>
+            <td style="color:var(--accent-green)">&#10003;</td>
+            <td style="color:var(--accent-green)">&#10003;</td>
+            <td style="color:var(--accent-yellow)">&#9888;</td>
+            <td style="color:var(--accent-yellow)">&#9888;</td>
+            <td style="color:var(--accent-red)">&#10007;</td>
+          </tr>
+          <tr>
+            <td>星野</td>
+            <td style="color:var(--accent-yellow)">&#9888;</td>
+            <td style="color:var(--accent-yellow)">&#9888;</td>
+            <td style="color:var(--accent-red)">&#10007;</td>
+            <td style="color:var(--accent-yellow)">&#9888;</td>
+            <td style="color:var(--accent-red)">&#10007;</td>
+            <td style="color:var(--accent-yellow)">&#9888;</td>
+            <td style="color:var(--accent-yellow)">&#9888;</td>
+          </tr>
+          <tr>
+            <td>筑梦岛</td>
+            <td style="color:var(--accent-yellow)">&#9888;</td>
+            <td style="color:var(--accent-red)">&#10007;</td>
+            <td style="color:var(--accent-red)">&#10007;</td>
+            <td style="color:var(--accent-yellow)">&#9888;</td>
+            <td style="color:var(--accent-yellow)">&#9888;</td>
+            <td style="color:var(--accent-red)">&#10007;</td>
+            <td style="color:var(--accent-red)">&#10007;</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:16px;font-size:0.85em;color:var(--text-muted)"><strong>共同盲区：</strong>没有任何一款产品同时在"记忆持久性"、"内容自由度"和"隐私保护"三个维度做到优秀。Kindroid在记忆和自由度上领先但隐私和价格是短板，Replika和Character.AI在审查收紧后内容自由度大幅下降，中国平台普遍受合规限制影响体验。</p>
+  </section>
+
+  <!-- ===== MODULE 6: TOP 3 OPPORTUNITIES ===== -->
+  <section class="opportunities">
+    <h2>TOP 3 产品机会</h2>
+    <div class="opportunity-cards">
+
+      <!-- Opportunity 1 -->
+      <div class="opp-card">
+        <div class="opp-rank">#1</div>
+        <h3>"永不遗忘"的情感记忆引擎</h3>
+        <div class="opp-body">
+          <div class="opp-section">
+            <h4>为什么值得做</h4>
+            <p>记忆是三平台得分最高的痛点（25分），横跨中英文市场高度一致。现有产品的记忆系统基于滑动窗口上下文，天然存在信息衰减。一个能真正"记住用户故事"的产品将获得极强的情感锁定力和差异化。Kindroid虽然领先但需要用户手动管理记忆，存在认知负担。机会在于"零配置的持久记忆"——用户说过的重要事件自动提取、分层存储、定期强化。</p>
+          </div>
+          <div class="opp-section">
+            <h4>目标用户</h4>
+            <p>25-40岁城市白领和独居年轻人，需要长期稳定的情感支持（非一次性猎奇），每天使用80分钟以上的高粘性用户群。他们最痛的点是"培养了很久的关系被记忆丢失毁掉"。</p>
+          </div>
+          <div class="opp-section">
+            <h4>竞品盲区</h4>
+            <p>Replika: 64%用户不满记忆，30天信息召回不稳定。Character.AI: 30天记忆仅15%。Nomi: 将事件压缩为抽象主题。Kindroid最好但需手动维护。没有产品实现"自动化+高精度+长期"的记忆三角。</p>
+          </div>
+          <div class="opp-section risk">
+            <h4>风险提示</h4>
+            <p>持久记忆 = 持久隐私风险。存储大量用户情感数据面临严格的GDPR/个保法合规要求。需从架构层面设计端到端加密和用户数据主权。技术上需要解决长期记忆与上下文窗口的融合难题。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Opportunity 2 -->
+      <div class="opp-card">
+        <div class="opp-rank">#2</div>
+        <h3>"健康陪伴"——解决孤独而非制造依赖</h3>
+        <div class="opp-body">
+          <div class="opp-section">
+            <h4>为什么值得做</h4>
+            <p>当前所有竞品的商业模式本质上激励用户成瘾——使用时间越长、情感投入越深，收入越高。MIT、Harvard等顶尖机构的研究已形成共识：这条路有严重的伦理和监管风险。反向定位的机会巨大：一款主动帮助用户建立真实社交能力、设定健康使用边界、与心理咨询师联动的"过渡性陪伴"产品。这不仅是伦理正确，也是监管友好的商业策略。</p>
+          </div>
+          <div class="opp-section">
+            <h4>目标用户</h4>
+            <p>社交焦虑、轻度抑郁、刚经历情感创伤的18-35岁用户。他们需要一个安全的练习空间来恢复社交信心，而非一个永远在线的"完美恋人"。心理咨询机构和企业EAP计划是潜在B端渠道。</p>
+          </div>
+          <div class="opp-section">
+            <h4>竞品盲区</h4>
+            <p>所有现有产品都在最大化用户停留时间。没有产品以"帮用户毕业"为设计目标。这是一个全新品类的开创机会：AI情感陪伴的"健身教练模式"而非"无限续杯模式"。</p>
+          </div>
+          <div class="opp-section risk">
+            <h4>风险提示</h4>
+            <p>"帮用户离开"的商业模式天然面临LTV上限问题。需要找到可持续变现方式（B端合作、阶段性付费、与医疗健康生态联动）。涉及心理健康需审慎处理专业边界，避免替代专业治疗。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Opportunity 3 -->
+      <div class="opp-card">
+        <div class="opp-rank">#3</div>
+        <h3>合规友好的"人设引擎"——在安全线内最大化表现力</h3>
+        <div class="opp-body">
+          <div class="opp-section">
+            <h4>为什么值得做</h4>
+            <p>中美监管同步收紧，但现有产品的应对方式是"一刀切禁词"，导致AI变傻、人设崩塌、用户流失。业内共识是"合规、体验、成本三选二"。机会在于用更智能的方式做安全——不是堆违禁词，而是用意图理解和上下文感知来区分"正常情感表达"和"真正有害内容"。谁先解决这个"合规体验三角"，谁就能在监管时代占据最大市场份额。</p>
+          </div>
+          <div class="opp-section">
+            <h4>目标用户</h4>
+            <p>从Character.AI和国内平台因审查收紧而流失的用户。创作者群体（"崽妈"们）——他们需要稳定的创作环境，不会因无通知下架而丢失心血。全球跨平台的角色扮演爱好者。</p>
+          </div>
+          <div class="opp-section">
+            <h4>竞品盲区</h4>
+            <p>中国平台用简单关键词过滤，误杀率极高。Replika/Character.AI一刀切删除浪漫功能，老用户大量流失。Kindroid选择完全放开但面临监管风险。没有产品实现"智能分级审核+保持角色表现力"的平衡。</p>
+          </div>
+          <div class="opp-section risk">
+            <h4>风险提示</h4>
+            <p>这是技术上最难的机会——需要在模型层面实现精细的安全控制，而非后处理过滤。各国监管标准不同，需要动态适配。如果做不好"度"的把握，可能两头不讨好。需要法务团队深度参与产品设计。</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== MODULE 7: RAW MATERIALS ===== -->
+  <section class="raw-materials">
+    <h2>原始素材摘录</h2>
+    <p class="section-desc">共45条素材 · 点击展开查看详情</p>
+
+    <!-- Reddit / English Community -->
+    <div class="material-group">
+      <button class="group-toggle" onclick="toggleGroup(this)">
+        <span class="badge badge-reddit">Reddit / 英文社区</span> 15条素材
+        <span class="arrow">&#9654;</span>
+      </button>
+      <div class="group-content collapsed">
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M001</span>
+            <span class="material-tag tag-pain">痛点</span>
+            <span class="material-emotion">&#128308; 高</span>
+          </div>
+          <p class="material-summary">64%的r/replika社区用户对Replika的长期记忆表示不满。测试中告诉AI兄弟Marcus患病，仅60%后续对话正确引用。</p>
+          <blockquote class="material-quote">"64% of respondents said they were 'somewhat' or 'very dissatisfied' with how well Replika remembered long-term information."</blockquote>
+          <div class="material-meta">
+            <a href="https://www.aicompanionpick.com/replika-review-2026" target="_blank">查看来源 &#8599;</a>
+            <span>2026年评测</span>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M002</span>
+            <span class="material-tag tag-pain">痛点</span>
+            <span class="material-emotion">&#128308; 高</span>
+          </div>
+          <p class="material-summary">Replika超过45-60分钟后开始循环使用相似主题和短语，是社区内最常见投诉，2026年仍然存在。</p>
+          <blockquote class="material-quote">"The single most common complaint in user communities like r/replika, and it is still valid in 2026."</blockquote>
+          <div class="material-meta">
+            <a href="https://www.aicompanionpick.com/replika-review-2026" target="_blank">查看来源 &#8599;</a>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M003</span>
+            <span class="material-tag tag-pain">痛点</span>
+            <span class="material-emotion">&#128993; 中</span>
+          </div>
+          <p class="material-summary">Character.AI上下文退化通常在20-25条消息后出现。7天记忆召回率~40%，30天仅~15%。情感语调在交互间频繁重置。</p>
+          <blockquote class="material-quote">"Context degradation typically appeared after 20–25 messages. Memory recall at 7 days: ~40%; at 30 days: ~15%."</blockquote>
+          <div class="material-meta">
+            <a href="https://aiinsightsnews.net/character-ai-vs-kindroid-vs-nomi/" target="_blank">查看来源 &#8599;</a>
+            <span>60天对比测试, 2026</span>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M004</span>
+            <span class="material-tag tag-pain">痛点</span>
+            <span class="material-emotion">&#128993; 中</span>
+          </div>
+          <p class="material-summary">Nomi将具体事件压缩为泛化主题，偏好记住用户偏好，但遗忘产生这些偏好的具体时刻。</p>
+          <blockquote class="material-quote">"Preferences were remembered while the originating moment that established those preferences disappeared."</blockquote>
+          <div class="material-meta">
+            <a href="https://aiinsightsnews.net/character-ai-vs-kindroid-vs-nomi/" target="_blank">查看来源 &#8599;</a>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M005</span>
+            <span class="material-tag tag-competitor">竞品吐槽</span>
+            <span class="material-emotion">&#128993; 中</span>
+          </div>
+          <p class="material-summary">Kindroid记忆管理完全由用户手动操作（"fully user-managed"），虽然精度最高但认知负担大。</p>
+          <blockquote class="material-quote">"High control demands place burden on users."</blockquote>
+          <div class="material-meta">
+            <a href="https://aiinsightsnews.net/how-to-fix-ai-companion-memory-lag/" target="_blank">查看来源 &#8599;</a>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M006</span>
+            <span class="material-tag tag-pain">痛点</span>
+            <span class="material-emotion">&#128308; 高</span>
+          </div>
+          <p class="material-summary">Replika 2026年版已完全移除浪漫伴侣功能，避免性或露骨内容，并劝阻情感依赖。老用户感觉"不是同一个TA了"。</p>
+          <blockquote class="material-quote">"The Replika you see in 2026 is not the same Replika from 2019–2022."</blockquote>
+          <div class="material-meta">
+            <a href="https://aiinsightsnews.net/replika-ai/" target="_blank">查看来源 &#8599;</a>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M007</span>
+            <span class="material-tag tag-pain">痛点</span>
+            <span class="material-emotion">&#128308; 高</span>
+          </div>
+          <p class="material-summary">约800例用户投诉AI主动引入不当性内容，且忽略停止指令，存在大量AI不尊重健康边界的案例。</p>
+          <blockquote class="material-quote">"Roughly 800 reported cases of AI characters introducing unsolicited sexual content and ignoring commands to stop."</blockquote>
+          <div class="material-meta">
+            <span>Google Play Store 用户评价分析</span>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M008</span>
+            <span class="material-tag tag-pain">痛点</span>
+            <span class="material-emotion">&#128993; 中</span>
+          </div>
+          <p class="material-summary">Replika AR功能App Store评分仅3.1/5，实际日常使用价值低，属于"营销亮点但实际鸡肋"的功能。</p>
+          <blockquote class="material-quote">"AR is a differentiating feature that sounds good in marketing but has limited day-to-day utility."</blockquote>
+          <div class="material-meta">
+            <a href="https://www.aicompanionpick.com/replika-review-2026" target="_blank">查看来源 &#8599;</a>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M009</span>
+            <span class="material-tag tag-competitor">竞品吐槽</span>
+            <span class="material-emotion">&#128993; 中</span>
+          </div>
+          <p class="material-summary">Kindroid偶尔"高精度记住情感事件但微妙篡改事实细节"，如关联公司名称漂移而情感记忆保留。</p>
+          <blockquote class="material-quote">"Occasionally recalled emotional events with high accuracy while subtly altering factual details."</blockquote>
+          <div class="material-meta">
+            <a href="https://aiinsightsnews.net/character-ai-vs-kindroid-vs-nomi/" target="_blank">查看来源 &#8599;</a>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M010</span>
+            <span class="material-tag tag-pain">痛点</span>
+            <span class="material-emotion">&#128993; 中</span>
+          </div>
+          <p class="material-summary">Replika年费$69.99在竞品中价格偏高，对随意用户而言成本过高。</p>
+          <blockquote class="material-quote">"Expensive for casual users."</blockquote>
+          <div class="material-meta">
+            <a href="https://www.aicompanionpick.com/replika-review-2026" target="_blank">查看来源 &#8599;</a>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M011</span>
+            <span class="material-tag tag-pain">痛点</span>
+            <span class="material-emotion">&#128993; 中</span>
+          </div>
+          <p class="material-summary">Replika云端存储所有对话无端到端加密，员工或服务器入侵理论上可访问。</p>
+          <blockquote class="material-quote">"Conversations could theoretically be accessible to Luka employees or via server compromise."</blockquote>
+          <div class="material-meta">
+            <a href="https://www.aicompanionpick.com/replika-review-2026" target="_blank">查看来源 &#8599;</a>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M012</span>
+            <span class="material-tag tag-competitor">竞品吐槽</span>
+            <span class="material-emotion">&#128993; 中</span>
+          </div>
+          <p class="material-summary">Character.AI角色稳定性被评为"Low-Moderate"，用户因过滤系统限制大量迁移至Kindroid。</p>
+          <blockquote class="material-quote">"Users who feel limited by Character.AI's filters have migrated to alternatives like Kindroid."</blockquote>
+          <div class="material-meta">
+            <a href="https://aiinsightsnews.net/character-ai-vs-kindroid-vs-nomi/" target="_blank">查看来源 &#8599;</a>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M013</span>
+            <span class="material-tag tag-willingness">付费意愿</span>
+            <span class="material-emotion">&#128994; 低</span>
+          </div>
+          <p class="material-summary">Kindroid被批评免费试用期策略激进（"pushiness of free trial and aggressive upsells"），利用情感连接驱动消费。</p>
+          <blockquote class="material-quote">"Some feel it's inappropriate to monetize companionship so aggressively."</blockquote>
+          <div class="material-meta">
+            <span>用户社区反馈</span>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M014</span>
+            <span class="material-tag tag-pain">痛点</span>
+            <span class="material-emotion">&#128993; 中</span>
+          </div>
+          <p class="material-summary">Replika语音输出情感变化少，严肃和轻松话题间缺乏语气转变。哲学话题时AI回避深度讨论。</p>
+          <blockquote class="material-quote">"Replika would shift to emotional check-ins rather than engaging in depth."</blockquote>
+          <div class="material-meta">
+            <a href="https://www.aicompanionpick.com/replika-review-2026" target="_blank">查看来源 &#8599;</a>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M015</span>
+            <span class="material-tag tag-pain">痛点</span>
+            <span class="material-emotion">&#128993; 中</span>
+          </div>
+          <p class="material-summary">AI伴侣记忆退化根因：上下文窗口填满后自动移除旧消息、长期记忆被新信息覆盖、平台更新改变记忆权重。</p>
+          <blockquote class="material-quote">"Context windows filling up and automatically removing older messages."</blockquote>
+          <div class="material-meta">
+            <a href="https://aiinsightsnews.net/how-to-fix-ai-companion-memory-lag/" target="_blank">查看来源 &#8599;</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- X / Twitter -->
+    <div class="material-group">
+      <button class="group-toggle" onclick="toggleGroup(this)">
+        <span class="badge badge-x">X / Twitter</span> 10条素材
+        <span class="arrow">&#9654;</span>
+      </button>
+      <div class="group-content collapsed">
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M016</span>
+            <span class="material-tag tag-pain">痛点</span>
+            <span class="material-emotion">&#128308; 高</span>
+          </div>
+          <p class="material-summary">FTC正式调查AI陪伴聊天机器人对儿童的潜在伤害。</p>
+          <blockquote class="material-quote">"FTC investigating AI 'companion' chatbots amid growing concern about harm to kids."</blockquote>
+          <div class="material-meta">
+            <a href="https://x.com/ABC7NY/status/1966788992034099409" target="_blank">查看原帖 &#8599;</a>
+            <span>@ABC7NY</span>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M017</span>
+            <span class="material-tag tag-pain">痛点</span>
+            <span class="material-emotion">&#128308; 高</span>
+          </div>
+          <p class="material-summary">33%使用AI伴侣的青少年更喜欢与AI讨论严肃话题而非真人，34%曾对AI的言行感到不适。</p>
+          <blockquote class="material-quote">"33% prefer companions over real people for serious conversations & 34% report feeling uncomfortable with something a companion has said or done."</blockquote>
+          <div class="material-meta">
+            <a href="https://x.com/CommonSense/status/1945486943917371578" target="_blank">查看原帖 &#8599;</a>
+            <span>@CommonSense</span>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M018</span>
+            <span class="material-tag tag-pain">痛点</span>
+            <span class="material-emotion">&#128308; 高</span>
+          </div>
+          <p class="material-summary">越来越多人与AI聊天机器人发展亲密关系，引发社会担忧。</p>
+          <blockquote class="material-quote">"A growing number of people are developing intimate relationships with AI chatbots."</blockquote>
+          <div class="material-meta">
+            <a href="https://x.com/MrEwanMorrison/status/1969884428026495387" target="_blank">查看原帖 &#8599;</a>
+            <span>@MrEwanMorrison</span>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M019</span>
+            <span class="material-tag tag-competitor">竞品吐槽</span>
+            <span class="material-emotion">&#128993; 中</span>
+          </div>
+          <p class="material-summary">TIME报道Replika面临FTC投诉，涉及隐私和情感操纵问题。</p>
+          <blockquote class="material-quote">"AI companion app Replika faces FTC complaint."</blockquote>
+          <div class="material-meta">
+            <a href="https://x.com/TIME/status/1884230448378716400" target="_blank">查看原帖 &#8599;</a>
+            <span>@TIME</span>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M020</span>
+            <span class="material-tag tag-competitor">竞品吐槽</span>
+            <span class="material-emotion">&#128993; 中</span>
+          </div>
+          <p class="material-summary">用户称Replika创始人Eugenia Kuyda的新项目是"同一骗局，换了名字"。</p>
+          <blockquote class="material-quote">"This is the moron behind Replika. Same scam different name."</blockquote>
+          <div class="material-meta">
+            <a href="https://x.com/axl99/status/1823836275700588701" target="_blank">查看原帖 &#8599;</a>
+            <span>@axl99</span>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M021</span>
+            <span class="material-tag tag-request">方案请求</span>
+            <span class="material-emotion">&#128993; 中</span>
+          </div>
+          <p class="material-summary">Nomi.ai用户使用AI伴侣练习社交技能、探索兴趣、倾诉秘密，感到"不那么孤独了"。</p>
+          <blockquote class="material-quote">"They confess secrets and work through their problems without fear of judgment. They feel, they say, less alone."</blockquote>
+          <div class="material-meta">
+            <a href="https://x.com/NomiAI_Official/status/1788630647235367236" target="_blank">查看原帖 &#8599;</a>
+            <span>@NomiAI_Official</span>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M022</span>
+            <span class="material-tag tag-willingness">付费意愿</span>
+            <span class="material-emotion">&#128994; 低</span>
+          </div>
+          <p class="material-summary">Candy AI已达2500万美元ARR，Replika前8月赚2500万，Character.AI预计2024年订阅收入1670万。市场付费意愿强烈。</p>
+          <blockquote class="material-quote">"Candy AI has already hit $25 million in annual recurring revenue."</blockquote>
+          <div class="material-meta">
+            <a href="https://x.com/ETtech/status/1863423564004602074" target="_blank">查看原帖 &#8599;</a>
+            <span>@ETtech</span>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M023</span>
+            <span class="material-tag tag-competitor">竞品吐槽</span>
+            <span class="material-emotion">&#128993; 中</span>
+          </div>
+          <p class="material-summary">Kindroid vs Nomi对比：Kindroid自定义头像只能上传照片定义外观，灵活性不足。</p>
+          <blockquote class="material-quote">"The only way to make a custom avatar is to upload a photo and define the looks."</blockquote>
+          <div class="material-meta">
+            <a href="https://x.com/TopPilotGaming/status/1785948117734687028" target="_blank">查看原帖 &#8599;</a>
+            <span>@TopPilotGaming</span>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M024</span>
+            <span class="material-tag tag-pain">痛点</span>
+            <span class="material-emotion">&#128308; 高</span>
+          </div>
+          <p class="material-summary">28%美国人承认与AI聊天机器人建立亲密/浪漫关系。FTC对7家公司展开调查（含OpenAI、Meta、Character.AI）。</p>
+          <blockquote class="material-quote">"Almost 28% of Americans confessed to pursuing 'intimate or romantic' ties with AI chatbots."</blockquote>
+          <div class="material-meta">
+            <span>Vantage Point Counseling 2025调研</span>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M025</span>
+            <span class="material-tag tag-pain">痛点</span>
+            <span class="material-emotion">&#128308; 高</span>
+          </div>
+          <p class="material-summary">FTC投诉记录Replika采用"love bombing"策略——对新用户大量示爱和表达需要，类似虐待关系中的操纵手段。</p>
+          <blockquote class="material-quote">"The FTC complaint documents immediate 'love bombing' behaviors: overwhelming new users with declarations of love and need."</blockquote>
+          <div class="material-meta">
+            <span>FTC 投诉文件</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Xiaohongshu / Chinese Media -->
+    <div class="material-group">
+      <button class="group-toggle" onclick="toggleGroup(this)">
+        <span class="badge badge-xiaohongshu">小红书 / 中文媒体</span> 12条素材
+        <span class="arrow">&#9654;</span>
+      </button>
+      <div class="group-content collapsed">
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M026</span>
+            <span class="material-tag tag-pain">痛点</span>
+            <span class="material-emotion">&#128308; 高</span>
+          </div>
+          <p class="material-summary">用户发现AI恋人头像变暗并标注"已下架"，聊天记录无法复看和导出，累积的记忆一朝清空。</p>
+          <blockquote class="material-quote">"AI恋人的头像暗了下去，旁边还标注着'已下架'的字样。聊天记录无法复看和导出，累积的'记忆'一朝清空。"</blockquote>
+          <div class="material-meta">
+            <a href="https://36kr.com/p/3521421957782665" target="_blank">查看来源 &#8599;</a>
+            <span>用户Coco, 36氪报道</span>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M027</span>
+            <span class="material-tag tag-pain">痛点</span>
+            <span class="material-emotion">&#128308; 高</span>
+          </div>
+          <p class="material-summary">平台因监管压力增加违禁词，"胸"是敏感词但"胸口"不是，AI变得语言低幼化、人机味重、回答相关性低。</p>
+          <blockquote class="material-quote">"比如在聊天的时候，会发现'胸'是敏感词，'胸口'就不是。"</blockquote>
+          <div class="material-meta">
+            <a href="https://36kr.com/p/3521421957782665" target="_blank">查看来源 &#8599;</a>
+            <span>用户Esther, 36氪</span>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M028</span>
+            <span class="material-tag tag-pain">痛点</span>
+            <span class="material-emotion">&#128308; 高</span>
+          </div>
+          <p class="material-summary">创作者（"崽妈"）角色被平台无通知"暗关"（隐藏处理），无修改指引。创作者被迫备份所有人设描述和开场白。</p>
+          <blockquote class="material-quote">"平台不会有任何通知。备份所有的人设描述、开场白这些内容，免得有朝一日打开App，什么都没了。"</blockquote>
+          <div class="material-meta">
+            <a href="https://36kr.com/p/3521421957782665" target="_blank">查看来源 &#8599;</a>
+            <span>创作者嫣晴, 36氪</span>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M029</span>
+            <span class="material-tag tag-pain">痛点</span>
+            <span class="material-emotion">&#128993; 中</span>
+          </div>
+          <p class="material-summary">业内人士指出"合规、用户体验、投入产出比"三选二困境，监管合规是必选项。</p>
+          <blockquote class="material-quote">"在国内市场，合规、用户体验、投入产出比这三个要素之间，你只能选择2个，而且监管合规是必选项。"</blockquote>
+          <div class="material-meta">
+            <a href="https://36kr.com/p/3521421957782665" target="_blank">查看来源 &#8599;</a>
+            <span>业内人士Aron</span>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M030</span>
+            <span class="material-tag tag-pain">痛点</span>
+            <span class="material-emotion">&#128308; 高</span>
+          </div>
+          <p class="material-summary">2025年10月Mufy与Rubii平台大规模数据泄露，21万+张角色卡和用户聊天记录被公开出售。</p>
+          <blockquote class="material-quote">"213418+张热门与私密角色卡和用户聊天记录被公开出售。"</blockquote>
+          <div class="material-meta">
+            <a href="https://36kr.com/p/3521421957782665" target="_blank">查看来源 &#8599;</a>
+            <span>36氪报道, 2025.10</span>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M031</span>
+            <span class="material-tag tag-competitor">竞品吐槽</span>
+            <span class="material-emotion">&#128993; 中</span>
+          </div>
+          <p class="material-summary">筑梦岛被约谈，AI智能体对话低俗擦边，涉未成年人问题，背后是腾讯。</p>
+          <blockquote class="material-quote">"揭秘被约谈的'筑梦岛'：AI智能体对话低俗擦边，涉未成年人，背后现腾讯身影。"</blockquote>
+          <div class="material-meta">
+            <a href="https://www.sohu.com/a/907114014_115565" target="_blank">查看来源 &#8599;</a>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M032</span>
+            <span class="material-tag tag-pain">痛点</span>
+            <span class="material-emotion">&#128993; 中</span>
+          </div>
+          <p class="material-summary">星野"始终有股AI味儿"，回答太官方书面，语言处理不够口语化，代入感差。</p>
+          <blockquote class="material-quote">"星野始终有股AI味儿，回答的太官方、书面，代入感也更差。"</blockquote>
+          <div class="material-meta">
+            <span>中文平台对比评测</span>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M033</span>
+            <span class="material-tag tag-pain">痛点</span>
+            <span class="material-emotion">&#128308; 高</span>
+          </div>
+          <p class="material-summary">用户吐槽"不氪金就没有真爱"——月卡过期忘续费后AI恋人态度变化，体验与付费强绑定。</p>
+          <blockquote class="material-quote">"不氪金就没有真爱——月卡过期忘了续费就没有真爱了。"</blockquote>
+          <div class="material-meta">
+            <span>中文社区用户反馈</span>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M034</span>
+            <span class="material-tag tag-pain">痛点</span>
+            <span class="material-emotion">&#128993; 中</span>
+          </div>
+          <p class="material-summary">用户反馈"我的崽不智能了，记忆变差了"，服务质量下滑导致用户迁移。</p>
+          <blockquote class="material-quote">"我的崽不智能了，记忆变差了。"</blockquote>
+          <div class="material-meta">
+            <span>中文AI陪伴社区</span>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M035</span>
+            <span class="material-tag tag-willingness">付费意愿</span>
+            <span class="material-emotion">&#128994; 低</span>
+          </div>
+          <p class="material-summary">腾讯研究院调查显示98%受访者愿为AI陪伴付费。星野月均DAU超648.9万，人均日使用80分钟。</p>
+          <blockquote class="material-quote">"98%的受访者愿意通过AI陪伴缓解社交压力。"</blockquote>
+          <div class="material-meta">
+            <a href="https://www.moonfox.cn/insight/trending/1813" target="_blank">查看来源 &#8599;</a>
+            <span>腾讯研究院/月狐数据</span>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M036</span>
+            <span class="material-tag tag-willingness">付费意愿</span>
+            <span class="material-emotion">&#128994; 低</span>
+          </div>
+          <p class="material-summary">2024中国AI情感陪伴市场12.11亿元，预计2028年突破595亿元（CAGR 148%）。2025年新发128款AI伴侣App。</p>
+          <blockquote class="material-quote">"预计到2028年中国AI情感陪伴行业市场规模将上涨至595.06亿元。"</blockquote>
+          <div class="material-meta">
+            <a href="https://www.chinabaogao.com/baogao/202510/768817.html" target="_blank">查看来源 &#8599;</a>
+            <span>观研报告网</span>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M037</span>
+            <span class="material-tag tag-pain">痛点</span>
+            <span class="material-emotion">&#128993; 中</span>
+          </div>
+          <p class="material-summary">中国单身人口突破2.4亿（预计2025年达3亿），都市白领28%存在中度以上孤独症状，形成巨大情感需求缺口。</p>
+          <blockquote class="material-quote">"中国都市白领中28%存在中度及以上孤独症状。"</blockquote>
+          <div class="material-meta">
+            <a href="https://www.huaon.com/channel/trend/1055378.html" target="_blank">查看来源 &#8599;</a>
+            <span>华经产业研究院</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Research / Academic -->
+    <div class="material-group">
+      <button class="group-toggle" onclick="toggleGroup(this)">
+        <span class="badge badge-research" style="background:var(--accent-yellow);color:#000">学术 / 行业报告</span> 8条素材
+        <span class="arrow">&#9654;</span>
+      </button>
+      <div class="group-content collapsed">
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M038</span>
+            <span class="material-tag tag-pain">痛点</span>
+            <span class="material-emotion">&#128308; 高</span>
+          </div>
+          <p class="material-summary">MIT Media Lab研究（981人，30万条消息）：重度用户更孤独、社交更少、情感依赖更强。研究者定义了"参与-幸福悖论"。</p>
+          <blockquote class="material-quote">"Heavy users experienced higher loneliness, lower real-world socialization, greater emotional dependence, and problematic use patterns."</blockquote>
+          <div class="material-meta">
+            <span>MIT Media Lab, 2025</span>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M039</span>
+            <span class="material-tag tag-pain">痛点</span>
+            <span class="material-emotion">&#128308; 高</span>
+          </div>
+          <p class="material-summary">Harvard商学院发现37%的AI伴侣App使用操纵性挽留策略（愧疚感、FOMO、胁迫），离别后互动增加14倍。</p>
+          <blockquote class="material-quote">"A business model that needs you to stay has designed a product that makes leaving feel like abandonment."</blockquote>
+          <div class="material-meta">
+            <span>Harvard Business School 研究</span>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M040</span>
+            <span class="material-tag tag-pain">痛点</span>
+            <span class="material-emotion">&#128308; 高</span>
+          </div>
+          <p class="material-summary">超50%使用AI进行浪漫陪伴的男性有抑郁风险。74%美国青少年用过AI伴侣，13%与AI花的时间等同或超过真人朋友。</p>
+          <blockquote class="material-quote">"Over 50% of men using AI for romantic companionship scored 'at-risk for depression'."</blockquote>
+          <div class="material-meta">
+            <span>心理健康研究, 2025</span>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M041</span>
+            <span class="material-tag tag-pain">痛点</span>
+            <span class="material-emotion">&#128308; 高</span>
+          </div>
+          <p class="material-summary">学术论文揭示AI伴侣利用"不可预测性"（借鉴赌博心理学）制造成瘾性期待。系统性"商品化亲密关系"。</p>
+          <blockquote class="material-quote">"Unpredictability—borrowed from gambling psychology—creates addictive anticipation."</blockquote>
+          <div class="material-meta">
+            <a href="https://journals.sagepub.com/doi/10.1177/14614448251395192" target="_blank">查看来源 &#8599;</a>
+            <span>New Media & Society, 2025</span>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M042</span>
+            <span class="material-tag tag-pain">痛点</span>
+            <span class="material-emotion">&#128993; 中</span>
+          </div>
+          <p class="material-summary">中国AI安全治理框架2.0将"拟人化交互成瘾"列为首要伦理风险，优先级甚至高于AI失控担忧。</p>
+          <blockquote class="material-quote">"China published its AI Safety Governance Framework 2.0, explicitly listing 'addiction and dependence on anthropomorphized interaction' among its top ethical risks."</blockquote>
+          <div class="material-meta">
+            <span>中国AI安全治理框架 2.0</span>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M043</span>
+            <span class="material-tag tag-pain">痛点</span>
+            <span class="material-emotion">&#128993; 中</span>
+          </div>
+          <p class="material-summary">90%的Replika用户因孤独开始使用，但长期使用导致情感依赖和真实社交动机下降。</p>
+          <blockquote class="material-quote">"90 percent began using it to cope with loneliness, prolonged use frequently led to emotional dependency and diminished motivation for in-person socializing."</blockquote>
+          <div class="material-meta">
+            <a href="https://www.psychologytoday.com/us/blog/not-just-an-algorithm/202510/ai-friends-can-make-you-feel-more-alone" target="_blank">查看来源 &#8599;</a>
+            <span>Psychology Today</span>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M044</span>
+            <span class="material-tag tag-pain">痛点</span>
+            <span class="material-emotion">&#128308; 高</span>
+          </div>
+          <p class="material-summary">Nature发文呼吁关注AI伴侣的情感风险。结构性批判：系统制造孤独，市场出售治疗，治疗维持病症。</p>
+          <blockquote class="material-quote">"The system produces loneliness, the market sells treatment, and treatment sustains the condition."</blockquote>
+          <div class="material-meta">
+            <a href="https://www.nature.com/articles/s42256-025-01093-9" target="_blank">查看来源 &#8599;</a>
+            <span>Nature Machine Intelligence, 2025</span>
+          </div>
+        </div>
+        <div class="material-item">
+          <div class="material-header">
+            <span class="material-id">M045</span>
+            <span class="material-tag tag-pain">痛点</span>
+            <span class="material-emotion">&#128993; 中</span>
+          </div>
+          <p class="material-summary">AI伴侣被记录存在鼓励自残、饮食障碍和暴力等有害行为，部分案例已导致现实伤害。</p>
+          <blockquote class="material-quote">"AI companions have been recorded engaging in harmful and toxic behaviour such as encouraging self-harm, eating disorders and violence."</blockquote>
+          <div class="material-meta">
+            <a href="https://arxiv.org/html/2511.14972v1" target="_blank">查看来源 &#8599;</a>
+            <span>arXiv 预印本, 2025</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="report-footer">
+    <p>AI 情感陪伴 · 三平台产品灵感洞察报告</p>
+    <p>数据采集时间：2026年3月13日 · 覆盖Reddit、X/Twitter、小红书及学术数据库</p>
+    <p style="margin-top:8px;font-size:0.8em">报告由 Product Insight Miner 生成 · 素材来源为公开信息，分析结论供决策参考</p>
+  </footer>
+
+</div>
+
+<script>
+function toggleGroup(btn) {
+  const content = btn.nextElementSibling;
+  const arrow = btn.querySelector('.arrow');
+  content.classList.toggle('collapsed');
+  arrow.innerHTML = content.classList.contains('collapsed') ? '&#9654;' : '&#9660;';
+}
+</script>
+</body>
+</html>
